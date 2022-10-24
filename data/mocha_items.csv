@@ -1,0 +1,41 @@
+Attribute Item nr;Attribute Item theme;Attribute Item Description
+1;"ACC; timely [item 1]";Primary care providers provide care within a reasonable amount of time, given the severity of the health issue
+2;"ACC; appointment system [item 2]";Primary care services for children have a convenient appointment system
+3;"ACC; opening hours [item 3]";Primary care services for children have ample opening hours, the after-hour care arrangements are good enough, and home-visits are planned if needed
+4;"ACC; referral primary care [item 4]";Children and/or their parents can make an appointment with other primary care providers without a referral from the main primary care provider
+5;"ACC; referral secondary care [item 5]";Children and/or their parents can make an appointment with secondary or other health care providers without a referral from a primary care provider
+6;"ACC; range of services [item 6]";Children and/or their parents know about the range of services available in primary care and how they can access them
+7;"ACC; distance [item 7]";Primary care services for children are nearby, and are easily reached on foot or by bike, car and/or public transport
+8;"ACC; building [item 8]";Primary care services for children can be easily accessed with buggies, wheelchairs, or other assistive devices 
+9;"ACC; medical record [item 9]";A child and/or his parents have access to a child's medical records 
+10;"AFF; feasible system [item 10]";The effort needed to get coverage and/or repayment for any out-of-pocket cost of primary care for a child is reasonable and feasible
+11;"AFF; free point of delivery [item 11]";Primary care services for a child are free at the point of delivery, or out-of-pocket costs are fully covered or repaid by insurance 
+12;"APP; facilities [item 12]";In primary care, the facilities and equipment are available to deliver the services that are needed for children
+13;"APP; time [item 13]";Primary care providers are able to dedicate enough time to working with a child
+14;"APP; clean [item 14]";Primary care services for children are provided in a clean and appealing setting
+15;"APP; primary care [item 15]";Health care for children is provided in the primary care setting whenever possible
+16;"APP; effective [item 16]";In primary care, a child’s health problems are effectively managed
+17;"APP; expertise [item 17]";Primary care providers have the skills and competences to provide the care a child needs
+18;"CONF; consultation [item 18]";A child has the right to a confidential consultation with the primary care provider
+19;"CONF; privacy from parents [item 19]";In primary care, a child can limit their parents’ access to the child’s medical records in order to protect his privacy
+20;"CONF; authorization MR [item 20]";In primary care, the child and/or the parents have to authorise other health care providers accessing the child’s medical records
+21;"CONT; medical record [item 21]";Any primary care provider caring for a child has access to a full overview of that child’s medical records
+22;"CONT; relationship [item 22]";A child and his parents have a long-term relationship with primary care providers, beyond specific episodes of illness or disease
+23;"CONT; consistency [item 23]";Primary care providers offer a consistent and coherent approach to the management of a child's health, which is adjusted when the needs of that child change
+24;"CONT; familiarity [item 24]";All health care providers involved in the care of a child know about each other’s involvement, trust each other and work well together
+25;"CONT; dignity and respect [item 25]";Primary care providers treat children and their parents with dignity and respect
+26;"CONT; easy to engage [item 26]";Primary care providers are easy to engage, considerate and non-judgmental of parents and children
+27;"COOR; primary and secondary [item 27]";If a child needs specialised and long-term care, hospitals and primary care providers collaborate to offer care close to the child's home
+28;"COOR; replacement [item 28]";If a child’s main primary care provider is sick or on leave, a replacement is available quickly
+29;"COOR; specialized care [item 29]";Specialised care (e.g. physiotherapy, dental health, psychological care, specialised chronic care nurses) is available to a child within the primary care provider’s practice
+30;"COOR; other health professionals [item 30]";If the main primary care provider of a child is not able to meet the needs of that child, that care can be given by other health professionals within the primary care practice
+31;"COOR; timely [item 31]";In primary care, a child is referred to other health care providers swiftly if this is needed
+32;"EMP; child independent [item 32]";In primary care, a child can express his opinions about his health management independently from his parents
+33;"EMP; well informed [item 33]";In primary care, children and their parents are well informed about (the management of) the child’s health
+34;"EMP; understanding [item 34]";Primary care providers make reasonable efforts to ensure that a child and his parents understand the information they provide
+35;"EMP; self-management [item 35]";Children and/or their parents are assisted by primary care providers in acquiring the skills to promote and manage the child’s health
+36;"EMP; opinions child [item 36]";Primary health care providers take into account the child’s opinion on their management of the child’s health
+37;"EMP; decision making [item 37]";In primary care, children and/or their parents are involved in decisions about the management of the child’s health
+38;"EQA; child health [item 38]";A child’s health is not influenced by the parents’ social status, economic situation, racial or ethnic background and/or geographic location
+39;"EQA; child access [item 39]";A child’s access to primary care and the quality of care he receives are not influenced by the parents’ social status, economic situation, racial or ethnic background and/or geographic location
+40;"TRANS; quality [item 40]";Primary care providers are open about the quality of the health services available to children
