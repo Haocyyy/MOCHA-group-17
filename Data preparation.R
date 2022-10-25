@@ -23,15 +23,32 @@ Region <-
 
 
 # Create Quality table ----------------------------------------------------
-Quality <- data_labels %>%
+
+#Separate most and least
+Most <- data_labels %>%
   select(Responseid.,
-        c(65, 66, 73, 74, 81, 82, 89, 90, 97, 98, 105, 106, 113, 114, 121, 122, 129, 130, 137, 138) ) %>%
-  arrange(name, province, region, segment) %>%
-  group_by(name, province, region, segment) %>%
-  distinct() %>%
-  ungroup() %>%
-  mutate(customerid = row_number())
-print
+        c(65, 73, 81, 89, 97, 105, 113, 121, 129, 137),
+        c(226, 234, 242, 250, 258, 266, 274, 282, 290,298))
+
+Least <- data_labels %>%
+  select(Responseid.,
+        c(66, 74, 82, 90, 98, 106, 114, 122, 130, 138),
+        c(227, 235, 243, 251, 259, 267, 275, 283, 291,299))
+
+#Count attributeitems 
+levelsMost <- unique(do.call(c,Most[2:21]))
+  outMost <- sapply(levelsMost,function(x)rowSums(Most==x))
+  colnames(outMost) <- levelsMost
+  
+Most <- cbind(Most,outMost) %>%
+  select(,-c(2:21))
+
+levelsLeast <- unique(do.call(c,Least[2:21]))
+  outLeast <- sapply(levelsLeast,function(x)rowSums(Least==x))
+  colnames(outLeast) <- levelsLeast
+  
+Least <- cbind(Least,outLeast) %>%
+   select(,-c(2:21))
 
 # Create Priority table ---------------------------------------------------
 
