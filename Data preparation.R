@@ -24,7 +24,7 @@ Region <-
 
 # Create Quality table ----------------------------------------------------
 
-#Separate most and least
+#Create most & least table
 Most <- data_labels %>%
   select(Responseid.,
         c(65, 73, 81, 89, 97, 105, 113, 121, 129, 137),
@@ -35,20 +35,30 @@ Least <- data_labels %>%
         c(66, 74, 82, 90, 98, 106, 114, 122, 130, 138),
         c(227, 235, 243, 251, 259, 267, 275, 283, 291,299))
 
-#Count attributeitems 
+#Count attributeitems
 levelsMost <- unique(do.call(c,Most[2:21]))
   outMost <- sapply(levelsMost,function(x)rowSums(Most==x))
   colnames(outMost) <- levelsMost
-  
-Most <- cbind(Most,outMost) %>%
-  select(,-c(2:21))
 
 levelsLeast <- unique(do.call(c,Least[2:21]))
   outLeast <- sapply(levelsLeast,function(x)rowSums(Least==x))
   colnames(outLeast) <- levelsLeast
   
+#Add counted attributeitems to most&least tables + delete the "questions" + put them in order  
+Most <- cbind(Most,outMost) %>%
+    select(.,-c(2:21)) 
+
+Most <- Most %>% select(order(colnames(Most))) 
+  
 Least <- cbind(Least,outLeast) %>%
-   select(,-c(2:21))
+   select(.,-c(2:21))
+
+Least <- Least %>% select(order(colnames(Least))) 
+
+#Create range table of all attributes (Most - Least = actual score)
+Range <- Most[c(1:40)] - Least[c(1:40)] 
+
+Range <-cbind(Range,Most[41])
 
 # Create Priority table ---------------------------------------------------
 
