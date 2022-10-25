@@ -31,6 +31,7 @@ Quality <- data_labels %>%
   distinct() %>%
   ungroup() %>%
   mutate(customerid = row_number())
+print
 
 # Create Priority table ---------------------------------------------------
 
