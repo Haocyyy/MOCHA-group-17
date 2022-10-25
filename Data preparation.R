@@ -10,6 +10,17 @@ head(data_names)
 data_labels <-read_excel("data/POCHA_FULL_DATASET_labels.xlsx", sheet = 1)
 head(data_labels)
 
+# Create Respondent table -------------------------------------------------
+Respondent <- data_names %>% 
+  select(Responseid,Q1,Q2) %>% 
+  rename(Respondent_ID = Responseid,Age = Q1,Gender=Q2)
+
+# Create Region table -----------------------------------------------------
+Region <-
+
+# Create Health Consumption table -----------------------------------------
+
+
 
 # Create Quality table ----------------------------------------------------
 Quality <- data_labels %>%
