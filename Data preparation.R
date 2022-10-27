@@ -16,7 +16,9 @@ Respondent <- data_names %>%
   rename(Respondent_ID = Responseid,Age = Q1,Gender=Q2)
 
 # Create Region table -----------------------------------------------------
-Region <-
+
+
+
 
 # Create Health Consumption table -----------------------------------------
 
