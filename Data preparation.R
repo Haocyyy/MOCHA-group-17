@@ -89,8 +89,25 @@ Priority <-cbind(Priority,Most[41]) %>%
   rename('Priority ID' = Responseid.)
 
 
-# Seperate itemlabels (attributes) ----------------------------------------
+# Create item table (attributes) ----------------------------------------
+Items <- data_items %>%
+  rename(Split = "Attribute Item theme")
 
+Items[c("Theme","Theme1")] <- str_split_fixed(Items$Split, ';', 2)
+
+Items[c("Keyword","Key1")] <- str_split_fixed(Items$Theme1, '\\[', 2)
+
+Items <- Items[,-2]
+Items <- Items[,-4]
+Items <- Items[,-5]
+  
+  
+  
+  select(c(1:7))
+  
+  select(- Split)
+  
+# Create facttable --------------------------------------------------------
 
 
 
