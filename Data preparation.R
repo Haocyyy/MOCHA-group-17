@@ -3,13 +3,6 @@ library(dplyr)
 library(tidyverse)
 #please install this package if not
 library(readxl)
-
-# Load the original data file ---------------------------------------------
-library(readr)
-library(dplyr)
-library(tidyverse)
-#please install this package if not
-library(readxl)
 library(rlang)
 library(rJava)
 options( java.parameters = "-Xmx5000m")
@@ -38,8 +31,6 @@ Health_Consumption <- data.frame(health_consumption_id = c(0, 1),
 ) 
 Health_Consumption$health_consumption_id<- as.integer(
   Health_Consumption$health_consumption_id)
-
-
 
 # Create Region table -----------------------------------------------------
 Region <-data_names %>% 
@@ -99,25 +90,17 @@ Respondent$Health_consumption[is.na(Respondent$Health_consumption)] <-1
 # Create Quality of primary care table ----------------------------------------------------
 
 #Create Quality table
-Quality <- data_labels %>%
+Quality_of_primary_care <- data_labels %>%
   select(Responseid.,
-         c(179:218))
+         c(179:218)) %>%
+  rename('Quality ID' = Responseid.)
 
 #Rename all column names into their itemnumbers
-oldnames = colnames(Quality)
-newnames = c("Responseid.", 1:40)
+oldnames = colnames(Quality_of_primary_care)
+newnames = c("Quality ID", 1:40)
 
-Quality <- Quality %>%
+Quality_of_primary_care <- Quality_of_primary_care %>%
   rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames)
-
-#Create satisfaction score table
-Satisfaction_score <- data_labels %>%
-  select(Responseid., 219) %>%
-  rename("Satisfy" = 2)
-
-#Combine to create Quality of primary care table
-Quality_of_primary_care <-cbind(Quality,Satisfaction_score[2]) %>%
-  rename('Quality ID' = Responseid.)
 
 # Create Priority table ---------------------------------------------------
 
@@ -159,9 +142,10 @@ Priority <-cbind(Priority,Most[41]) %>%
   rename('Priority ID' = Responseid.)
 
 
-# Create item table (attributes) ----------------------------------------
+# Create item table (attributes) (not in star scheme?) ----------------------------------------
 Items <- data_items %>%
-  rename(Split = "Attribute Item theme")
+  rename(Split = "Attribute Item theme",
+         ItemID = "Attribute Item nr")
 
 Items[c("Theme","Theme1")] <- str_split_fixed(Items$Split, ';', 2)
 
@@ -172,6 +156,25 @@ Items <- Items[,-4]
 Items <- Items[,-5]
   
 # Create facttable --------------------------------------------------------
+
+#Create satisfaction score table first (not in star scheme)
+Satisfaction_score <- data_labels %>%
+  select(Responseid., 219) %>%
+  rename("Satisfy" = 2)
+
+#Join tables
+
+Fact <- Respondent %>%
+  select(Respondent_ID, Region_ID, Health_consumption)
+
+Fact <- Fact %>%
+  full_join(Quality_of_primary_care, by = c("Respondent_ID" = "Quality ID"))
+
+Fact <- Fact %>%
+  full_join(Satisfaction_score, by = c("Respondent_ID" = "Responseid."))
+
+Fact <- Fact %>%
+  full_join(Priority, by = c ("Respondent_ID" = "Priority ID"))
 
 # Connect to the PostgreSQL database server -------------------------------
 
@@ -184,12 +187,18 @@ con <- dbConnect(drv, port = 5432, host = "bronto.ewi.utwente.nl",
                  password = "dzhmetxI0WPAepIp",
                  options="-c search_path=project")
 Region<-as.data.frame(Region)
-Health_Consumption<-as.data.frame
+Health_Consumption<-as.data.frame(Health_Consumption)
 Respondent<-as.data.frame(Respondent)
+Quality_of_primary_care<-as.data.frame(Quality_of_primary_care)
+Priority<-as.data.frame(Priority)
+Items<-as.data.frame(Items)
+Fact<-as.data.frame(Fact)
 
 dbWriteTable(con, "Region", value = Region, overwrite = T, row.names = F)
 dbWriteTable(con, "Health_Consumption", value = Health_Consumption, 
              overwrite = T, row.names = F)
 dbWriteTable(con, "Respondent", value = Respondent, overwrite = T, row.names = F)
-
-
+dbWriteTable(con, "Quality_of_primary_care", value = Quality_of_primary_care, overwrite = T, row.names = F)
+dbWriteTable(con, "Priority", value = Priority, overwrite = T, row.names = F)
+dbWriteTable(con, "Items", value = Items, overwrite = T, row.names = F)
+dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
