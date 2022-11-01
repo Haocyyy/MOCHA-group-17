@@ -176,6 +176,45 @@ Fact <- Fact %>%
 Fact <- Fact %>%
   full_join(Priority, by = c ("Respondent_ID" = "Priority ID"))
 
+
+# Making separate tables for tableau (not for star scheme) THIS IS NEW ----------------
+
+Priority <- Priority %>%
+  select("Priority ID", everything())
+
+Priority1 <- data.frame(t(Priority[-1]))
+colnames(Priority1) <- Priority[, 1]
+
+Priority1$Mean <- rowMeans(Priority1, na.rm=TRUE)
+
+Priority1 <- Priority1 %>%
+  select(-c(1:2640))
+
+
+Priority1 <- Priority
+
+Priority1Average <- summarize_all(Priority1, mean)
+Priority1 <- rbind(Priority1, Priority1Average)
+rownames(Priority1)[rownames(Priority1) == "2641"] <- "Average"
+Priority1[2641, 1] = 0.1
+
+Quality_of_primary_care1 <- data.frame(t(Quality_of_primary_care[-1]))
+
+Quality_of_primary_care1$Mean <- rowMeans(Quality_of_primary_care1, na.rm=TRUE)
+
+Quality_of_primary_care1 <- Quality_of_primary_care1 %>%
+  select(-c(1:2640))
+
+
+
+
+Quality_of_primary_care1 <- Quality_of_primary_care
+
+Quality1Average <- summarize_all(Quality_of_primary_care1, mean)
+Quality_of_primary_care1 <- rbind(Quality_of_primary_care1, Quality1Average)
+rownames(Quality_of_primary_care1)[rownames(Quality_of_primary_care1) == "2641"] <- "Average"
+
+
 # Connect to the PostgreSQL database server -------------------------------
 
 library(DBI)
@@ -194,6 +233,11 @@ Priority<-as.data.frame(Priority)
 Items<-as.data.frame(Items)
 Fact<-as.data.frame(Fact)
 
+
+Quality_of_primary_care1<-as.data.frame(Quality_of_primary_care1)
+Priority1<-as.data.frame(Priority1)
+
+
 dbWriteTable(con, "Region", value = Region, overwrite = T, row.names = F)
 dbWriteTable(con, "Health_Consumption", value = Health_Consumption, 
              overwrite = T, row.names = F)
@@ -202,3 +246,7 @@ dbWriteTable(con, "Quality_of_primary_care", value = Quality_of_primary_care, ov
 dbWriteTable(con, "Priority", value = Priority, overwrite = T, row.names = F)
 dbWriteTable(con, "Items", value = Items, overwrite = T, row.names = F)
 dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
+
+
+dbWriteTable(con, "Quality_of_primary_care1", value = Quality_of_primary_care1, overwrite = T, row.names = F)
+dbWriteTable(con, "Priority1", value = Priority1, overwrite = T, row.names = F)
