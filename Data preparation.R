@@ -192,6 +192,8 @@ Fact <- Fact %>%
 
 Fact <- Fact[, c("Respondent_ID", "ItemID", "Country", "Health_consumption", "Quality score", "Priority score", "Satisfy")]
 
+Fact$ItemID <- as.double(Fact$ItemID)
+
 # Connect to the PostgreSQL database server -------------------------------
 
 library(DBI)
