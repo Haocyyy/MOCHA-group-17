@@ -1,6 +1,7 @@
 library(readr) 
 library(dplyr) 
 library(tidyverse) 
+library(reshape2)
 #please install this package if not 
 library(readxl) 
 library(rlang) 
@@ -104,6 +105,15 @@ Quality_of_primary_care <- Quality_of_primary_care %>%
   rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames) 
 #Replace the value "6" to NA 
 Quality_of_primary_care[Quality_of_primary_care=="6"]=NA 
+
+#Make for every respondent 40 rows of attributeitems
+
+Quality_of_primary_care <- melt(Quality_of_primary_care, id.vars=1) 
+
+Quality_of_primary_care <- Quality_of_primary_care %>%
+  rename("ItemID" = "variable",
+         "Quality score" = "value")
+
 # Create Priority table --------------------------------------------------- 
 
 #Create most & least table 
@@ -128,7 +138,7 @@ colnames(outLeast) <- levelsLeast
 
 #Add counted attributeitems to most&least tables + delete the "questions" + put them in order   
 Most <- cbind(Most,outMost) %>% 
-  select(.,-c(2:21))  
+  select(.,-c(2:21))
 
 Most <- Most %>% select(order(colnames(Most)))  
 
@@ -141,10 +151,17 @@ Least <- Least %>% select(order(colnames(Least)))
 Priority <- Most[c(1:40)] - Least[c(1:40)]  
 
 Priority <-cbind(Priority,Most[41]) %>% 
-  rename('Priority ID' = Responseid.) 
+  rename('Priority ID' = Responseid.) %>%
+  select("Priority ID", everything())
 
+#Make for every respondent 40 rows of attributeitems
+Priority <- melt(Priority, id.vars=1) 
 
-# Create item table (attributes) (not in star scheme?) ---------------------------------------- 
+Priority <- Priority %>%
+  rename("ItemID" = "variable",
+         "Priority score" = "value")
+
+# Create item table (attributes) ---------------------------------------- 
 Items <- data_items %>% 
   rename(Split = "Attribute Item theme", 
          ItemID = "Attribute Item nr") 
@@ -159,64 +176,21 @@ Items <- Items[,-5]
 
 # Create fact table -------------------------------------------------------- 
 
-#Create satisfaction score table first (not in star scheme) 
-Satisfaction_score <- data_labels %>% 
-  select(Responseid., 219) %>% 
-  rename("Satisfy" = 2) 
-
 #Join tables 
 
-Fact <- Respondent %>% 
-  select(Respondent_ID, Country, Health_consumption) 
+Fact <- data_labels %>%
+  select(Responseid.,219) %>%
+  rename("Satisfy" = 2)
 
-Fact <- Fact %>% 
-  full_join(Quality_of_primary_care, by = c("Respondent_ID" = "Quality ID")) 
+Fact <- left_join(Fact, Respondent, by = c("Responseid." = "Respondent_ID"))
 
-Fact <- Fact %>% 
-  full_join(Satisfaction_score, by = c("Respondent_ID" = "Responseid.")) 
+Fact <- Fact %>%
+  full_join(Quality_of_primary_care, by = c("Responseid." = "Quality ID")) %>%
+  full_join(Priority, by = c("Responseid." = "Priority ID", "ItemID" = "ItemID")) %>%
+  select(-c(3:12)) %>%
+  rename("Respondent_ID" = "Responseid.")
 
-Fact <- Fact %>% 
-  full_join(Priority, by = c ("Respondent_ID" = "Priority ID")) 
-
-
-
-# Making separate tables for tableau (not for star scheme) THIS IS NEW ----------------
-
-Priority <- Priority %>%
-  select("Priority ID", everything())
-
-Priority1 <- data.frame(t(Priority[-1]))
-colnames(Priority1) <- Priority[, 1]
-Priority1$Mean <- rowMeans(Priority1, na.rm=TRUE)
-Priority1 <- add_rownames(Priority1)
-  
-Priority1 <- Priority1 %>%  
-  rename(Itemlabel = rowname) %>%
-  select(-c(2:2641))
-
-Quality_of_primary_care1 <- data.frame(t(Quality_of_primary_care[-1]))
-Quality_of_primary_care1$Mean <- rowMeans(Quality_of_primary_care1, na.rm=TRUE)
-Quality_of_primary_care1 <- Quality_of_primary_care1 %>%
-  mutate(Itemlabel = row_number()) %>%
-  select(-c(1:2640))
-Quality_of_primary_care1$Itemlabel <- as.character(Quality_of_primary_care1$Itemlabel)
-
-Tableau1 <- Quality_of_primary_care1 %>%
-  full_join(Priority1, by = c("Itemlabel" = "Itemlabel")) %>%
-  rename("Quality Mean"= Mean.x,
-  "Priority Mean" = Mean.y)
-Tableau1$Itemlabel <- as.numeric(Tableau1$Itemlabel)
-
-#Standardizing
-Tableau1$`Quality Mean` <- as.data.frame(scale(Tableau1$`Quality Mean`))
-Tableau1$`Priority Mean` <- as.data.frame(scale(Tableau1$`Priority Mean`))
-
-Tableau1 <- Tableau1 %>%
-  rename("Standardized Quality" = 1,
-         "Standardized Priority" = 3)
-
-Tableau1$`Standardized Quality` <- as.numeric(unlist(Tableau1$`Standardized Quality`))
-Tableau1$`Standardized Priority` <- as.numeric(unlist(Tableau1$`Standardized Priority`))
+Fact <- Fact[, c("Respondent_ID", "ItemID", "Country", "Health_consumption", "Quality score", "Priority score", "Satisfy")]
 
 # Connect to the PostgreSQL database server -------------------------------
 
@@ -244,12 +218,3 @@ dbWriteTable(con, "Quality_of_primary_care", value = Quality_of_primary_care, ov
 dbWriteTable(con, "Priority", value = Priority, overwrite = T, row.names = F)
 dbWriteTable(con, "Items", value = Items, overwrite = T, row.names = F)
 dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
-
-#Not part of starscheme but needed for Tableau
-Quality_of_primary_care1<-as.data.frame(Quality_of_primary_care1)
-Priority1<-as.data.frame(Priority1)
-Tableau1<-as.data.frame(Tableau1)
-
-dbWriteTable(con, "Quality_of_primary_care1", value = Quality_of_primary_care1, overwrite = T, row.names = F)
-dbWriteTable(con, "Priority1", value = Priority1, overwrite = T, row.names = F)
-dbWriteTable(con, "Tableau1", value = Tableau1, overwrite = T, row.names = F)
