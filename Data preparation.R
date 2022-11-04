@@ -220,3 +220,20 @@ dbWriteTable(con, "Quality_of_primary_care", value = Quality_of_primary_care, ov
 dbWriteTable(con, "Priority", value = Priority, overwrite = T, row.names = F)
 dbWriteTable(con, "Items", value = Items, overwrite = T, row.names = F)
 dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
+
+
+
+# Do not add to R script in Appendix ---------------------------------------
+Fact$`Standardized Quality` <- as.data.frame(scale(Fact$`Quality score`))
+Fact$`Standardized Priority` <- as.data.frame(scale(Fact$`Priority score`)) 
+
+Fact <- Fact %>% 
+  rename("Standardized Quality" = 8, 
+         "Standardized Priority" = 9) 
+
+Fact$`Standardized Quality` <- as.numeric(unlist(Fact$`Standardized Quality`)) 
+Fact$`Standardized Priority` <- as.numeric(unlist(Fact$`Standardized Priority`)) 
+
+Fact<-as.data.frame(Fact)
+dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
+
