@@ -194,6 +194,18 @@ Fact <- Fact[, c("Respondent_ID", "ItemID", "Country", "Health_consumption", "Qu
 
 Fact$ItemID <- as.double(Fact$ItemID)
 
+
+# Standardizing for Tableau ---------------------------------------
+Fact$`Standardized Quality` <- as.data.frame(scale(Fact$`Quality score`))
+Fact$`Standardized Priority` <- as.data.frame(scale(Fact$`Priority score`)) 
+
+Fact <- Fact %>% 
+  rename("Standardized Quality" = 8, 
+         "Standardized Priority" = 9) 
+
+Fact$`Standardized Quality` <- as.numeric(unlist(Fact$`Standardized Quality`)) 
+Fact$`Standardized Priority` <- as.numeric(unlist(Fact$`Standardized Priority`)) 
+
 # Connect to the PostgreSQL database server -------------------------------
 
 library(DBI)
@@ -222,18 +234,4 @@ dbWriteTable(con, "Items", value = Items, overwrite = T, row.names = F)
 dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
 
 
-
-# Do not add to R script in Appendix ---------------------------------------
-Fact$`Standardized Quality` <- as.data.frame(scale(Fact$`Quality score`))
-Fact$`Standardized Priority` <- as.data.frame(scale(Fact$`Priority score`)) 
-
-Fact <- Fact %>% 
-  rename("Standardized Quality" = 8, 
-         "Standardized Priority" = 9) 
-
-Fact$`Standardized Quality` <- as.numeric(unlist(Fact$`Standardized Quality`)) 
-Fact$`Standardized Priority` <- as.numeric(unlist(Fact$`Standardized Priority`)) 
-
-Fact<-as.data.frame(Fact)
-dbWriteTable(con, "Fact", value = Fact, overwrite = T, row.names = F)
 
