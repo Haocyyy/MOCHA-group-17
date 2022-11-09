@@ -214,14 +214,14 @@ Fact <- data_labels %>%
   rename("Satisfy" = 2) 
 
 Fact <- left_join(Fact, Respondent, by = c("Responseid." = "Respondent_ID")) 
+Fact <- left_join(Fact, Region, by = c("Region_ID" = "Region_ID"))
 
 Fact <- Fact %>% 
   full_join(Quality_of_primary_care, by = c("Responseid." = "Quality ID")) %>% 
-  full_join(Priority, by = c("Responseid." = "Priority ID", "ItemID" = "ItemID")) %>% 
-  select(-c(4:10)) %>% 
+  full_join(Priority, by = c("Responseid." = "Priority ID", "ItemID" = "ItemID")) %>%
   rename("Respondent_ID" = "Responseid.") 
 
-Fact <- Fact[, c("Respondent_ID", "ItemID","Region_ID" , "Quality score", "Priority score", "Satisfy")] 
+Fact <- Fact[, c("Respondent_ID", "ItemID","Region_ID", "Country" , "Quality score", "Priority score", "Satisfy")] 
 
 Fact$ItemID <- as.double(Fact$ItemID) 
 
@@ -230,8 +230,8 @@ Fact$`Standardized Quality` <- as.data.frame(scale(Fact$`Quality score`))
 Fact$`Standardized Priority` <- as.data.frame(scale(Fact$`Priority score`))  
 
 Fact <- Fact %>%  
-  rename("Standardized Quality" = 7,  
-         "Standardized Priority" = 8)  
+  rename("Standardized Quality" = 8,  
+         "Standardized Priority" = 9)  
 
 Fact$`Standardized Quality` <- as.numeric(unlist(Fact$`Standardized Quality`))  
 Fact$`Standardized Priority` <- as.numeric(unlist(Fact$`Standardized Priority`)) 
