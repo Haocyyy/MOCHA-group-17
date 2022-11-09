@@ -34,10 +34,11 @@ Health_Consumption$health_consumption_id<- as.integer(
   Health_Consumption$health_consumption_id)  
 
 # Create Region table ---------------------------------------------------- 
-Region <-data_names %>%   
+Region <- data_names %>%   
   select(Responseid,Q45,Q3UK,Q3NL,Q3DE,Q3ES,Q3PL,Qcountry) %>%   
   rename(Respondent_ID = Responseid,City_size=Q45) %>%   
-  #Create "Country" column  
+
+#Create "Country" column  
   mutate(Country = case_when(  
     !is.na(Q3UK)~'UK',  
     !is.na(Q3DE)~'DE',  
@@ -45,20 +46,22 @@ Region <-data_names %>%
     !is.na(Q3ES)~'ES',  
     !is.na(Q3PL)~'PL'  
   )) %>%   
-  #Create "Region"column  
+
+#Create "Region"column  
   mutate(Region = case_when(  
     !is.na(Q3UK)~Q3UK,  
     !is.na(Q3DE)~Q3DE,  
     !is.na(Q3NL)~Q3NL,  
     !is.na(Q3ES)~Q3ES,  
     !is.na(Q3PL)~Q3PL  
-  )) %>%   
-  select(-Respondent_ID,-Q3UK,-Q3NL,-Q3DE,-Q3ES,-Q3PL,-Qcountry) %>%  
+  )) %>%
+    select(-Respondent_ID,-Q3UK,-Q3NL,-Q3DE,-Q3ES,-Q3PL,-Qcountry) %>%  
   arrange(Country,Region,City_size) %>%  
   group_by(Country,Region,City_size) %>%  
   distinct() %>%  
   ungroup() %>%  
   mutate(Region_ID = row_number()) 
+
 #Reorder the columns   
 Region <- Region[, c("Region_ID", "Country", "Region","City_size")]  
 
@@ -227,8 +230,8 @@ Fact$`Standardized Quality` <- as.data.frame(scale(Fact$`Quality score`))
 Fact$`Standardized Priority` <- as.data.frame(scale(Fact$`Priority score`))  
 
 Fact <- Fact %>%  
-  rename("Standardized Quality" = 8,  
-         "Standardized Priority" = 9)  
+  rename("Standardized Quality" = 7,  
+         "Standardized Priority" = 8)  
 
 Fact$`Standardized Quality` <- as.numeric(unlist(Fact$`Standardized Quality`))  
 Fact$`Standardized Priority` <- as.numeric(unlist(Fact$`Standardized Priority`)) 
